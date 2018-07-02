@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using MarginTrading.AccountsManagement.Contracts.Api;
 using MarginTrading.AccountsManagement.Contracts.Events;
 using MarginTrading.AccountsManagement.Contracts.Models;
@@ -19,7 +20,7 @@ namespace MarginTrading.AccountsManagement.IntegrationTests.WorkflowTests
                 account = await ClientUtil.AccountsApi.Create(ClientId, new CreateAccountRequest
                 {
                     AccountId = AccountId,
-                    BaseAssetId = "USD",
+                    BaseAssetId = "EUR",
                 });
             }
 
@@ -47,8 +48,10 @@ namespace MarginTrading.AccountsManagement.IntegrationTests.WorkflowTests
             var operationId = await ClientUtil.AccountsApi.BeginChargeManually(ClientId, AccountId,
                 new AccountChargeManuallyRequest
                 {
+                    OperationId = Guid.NewGuid().ToString(),
                     AmountDelta = delta,
-                    Reason = "intergational tests"
+                    Reason = "intergational tests",
+                    ReasonType = AccountBalanceChangeReasonTypeContract.Manual,
                 });
 
             await RabbitUtil.WaitForCqrsMessage<AccountChangedEvent>(m => m.BalanceChange.Id == operationId);
