@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarginTrading.AccountsManagement.IntegrationTests", "MarginTrading.AccountsManagement.IntegrationTests\MarginTrading.AccountsManagement.IntegrationTests.csproj", "{CCA3EBE8-B7B6-4635-BF84-EEB3E789962C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CCA3EBE8-B7B6-4635-BF84-EEB3E789962C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCA3EBE8-B7B6-4635-BF84-EEB3E789962C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCA3EBE8-B7B6-4635-BF84-EEB3E789962C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCA3EBE8-B7B6-4635-BF84-EEB3E789962C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
