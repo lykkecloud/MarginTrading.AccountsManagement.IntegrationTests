@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -24,7 +25,7 @@ namespace MarginTrading.AccountsManagement.IntegrationTests.WorkflowTests
                 IsDisabled = false,
             }, o => o.ExcludingMissingMembers());
             
-            result.Should().BeEquivalentTo(account);
+            result.Should().BeEquivalentTo(account, o => o.Excluding(x => x.ModificationTimestamp));
         }
 
         [TestCase(-10000)]

@@ -1,7 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using MarginTrading.AccountsManagement.Contracts.Api;
 using MarginTrading.AccountsManagement.Contracts.Events;
+using MarginTrading.AccountsManagement.Contracts.Models;
 using MarginTrading.AccountsManagement.IntegrationTests.Infrastructure;
 using NUnit.Framework;
 
@@ -21,8 +24,10 @@ namespace MarginTrading.AccountsManagement.IntegrationTests.WorkflowTests
                 TestsHelpers.AccountId,
                 new AccountChargeManuallyRequest
                 {
+                    OperationId = Guid.NewGuid().ToString(),
                     AmountDelta = 123,
                     Reason = "intergational tests: withdraw",
+                    ReasonType = AccountBalanceChangeReasonTypeContract.Manual,
                 });
             
             var messagesReceivedTask = Task.WhenAll(
@@ -43,20 +48,22 @@ namespace MarginTrading.AccountsManagement.IntegrationTests.WorkflowTests
             (await TestsHelpers.GetAccount()).Balance.Should().Be(123);
 
             // act
-
             var operationId = await ClientUtil.AccountsApi.BeginWithdraw(TestsHelpers.ClientId,
                 TestsHelpers.AccountId,
                 new AccountChargeManuallyRequest
                 {
+                    OperationId = Guid.NewGuid().ToString(),
                     AmountDelta = 124,
                     Reason = "intergational tests: withdraw",
+                    ReasonType = AccountBalanceChangeReasonTypeContract.Manual,
                 });
             
             var eventTask = await Task.WhenAny(
                 RabbitUtil.WaitForCqrsMessage<WithdrawalSucceededEvent>(m => m.OperationId == operationId),
                 RabbitUtil.WaitForCqrsMessage<WithdrawalFailedEvent>(m => m.OperationId == operationId));
 
-            eventTask.Should().BeOfType<Task<WithdrawalFailedEvent>>();
+            eventTask.GetType().GetGenericArguments().First().Should().Be<WithdrawalFailedEvent>();
+            //eventTask.Should().BeOfType<Task<WithdrawalFailedEvent>>();
 
             // assert
             (await TestsHelpers.GetAccount()).Balance.Should().Be(123);

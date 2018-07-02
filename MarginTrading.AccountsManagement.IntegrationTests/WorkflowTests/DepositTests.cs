@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using MarginTrading.AccountsManagement.Contracts.Api;
 using MarginTrading.AccountsManagement.Contracts.Events;
+using MarginTrading.AccountsManagement.Contracts.Models;
 using MarginTrading.AccountsManagement.IntegrationTests.Infrastructure;
 using NUnit.Framework;
 
@@ -21,8 +23,10 @@ namespace MarginTrading.AccountsManagement.IntegrationTests.WorkflowTests
                 TestsHelpers.AccountId,
                 new AccountChargeManuallyRequest
                 {
+                    OperationId = Guid.NewGuid().ToString(),
                     AmountDelta = 123,
                     Reason = "intergational tests: deposit",
+                    ReasonType = AccountBalanceChangeReasonTypeContract.Manual,
                 });
             
             var messagesReceivedTask = Task.WhenAll(
