@@ -26,7 +26,7 @@ namespace MarginTrading.AccountsManagement.IntegrationTests.WorkflowTests
                 {
                     OperationId = Guid.NewGuid().ToString(),
                     AmountDelta = 123,
-                    Reason = "intergational tests: withdraw",
+                    Reason = "integration tests: withdraw",
                     ReasonType = AccountBalanceChangeReasonTypeContract.Manual,
                 });
             
@@ -54,7 +54,7 @@ namespace MarginTrading.AccountsManagement.IntegrationTests.WorkflowTests
                 {
                     OperationId = Guid.NewGuid().ToString(),
                     AmountDelta = 124,
-                    Reason = "intergational tests: withdraw",
+                    Reason = "integration tests: withdraw",
                     ReasonType = AccountBalanceChangeReasonTypeContract.Manual,
                 });
             
