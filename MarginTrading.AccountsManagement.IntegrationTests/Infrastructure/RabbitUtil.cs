@@ -38,7 +38,7 @@ namespace MarginTrading.AccountsManagement.IntegrationTests.Infrastructure
                     (k, l) => l.Remove(listener));
             }
 
-            return listener.TaskCompletionSource.Task.WithTimeout((int) TimeSpan.FromSeconds(10).TotalMilliseconds);
+            return listener.TaskCompletionSource.Task.WithTimeout(10000);
         }
 
         public static void ListenCqrsMessages<T>(string connectionString, string exchange)
@@ -76,7 +76,10 @@ namespace MarginTrading.AccountsManagement.IntegrationTests.Infrastructure
 
         private static Task<bool> CompleteListener<T>(T message, Listener<T> l)
         {
-            return Task.Run(() => l.TaskCompletionSource.TrySetResult(message));
+            l.TaskCompletionSource.SetResult(message);
+            return Task.FromResult(true);
+            //TODO tests are now working in synchronous mode. Tests are timing out in async mode. Check it.
+            //return Task.Run(() => l.TaskCompletionSource.TrySetResult(message));
         }
 
         private class Listener
