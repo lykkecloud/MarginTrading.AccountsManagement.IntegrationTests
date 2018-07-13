@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using FluentAssertions;
+using MarginTrading.AccountsManagement.Contracts.Events;
+using MarginTrading.AccountsManagement.IntegrationTests.Infrastructure;
 using NUnit.Framework;
 
 namespace MarginTrading.AccountsManagement.IntegrationTests.WorkflowTests
@@ -13,18 +16,24 @@ namespace MarginTrading.AccountsManagement.IntegrationTests.WorkflowTests
             // arrange
             await TestsHelpers.EnsureAccountState();
             var operationId = Guid.NewGuid().ToString();
-/*
             // act
             //todo use specific command
-            /*CqrsUtil.SendCommandToAccountManagement(
-                new BeginClosePositionBalanceUpdateCommand(TestsHelpers.ClientId, TestsHelpers.AccountId, delta,
-                    operationId, "IntegrationalTests", "Always_ShouldUpdateBalance"));
+            CqrsUtil.SendEventToAccountManagement(new Backend.Contracts.Events.PositionClosedEvent(
+                accountId: TestsHelpers.AccountId, 
+                clientId: TestsHelpers.ClientId, 
+                positionId: operationId, 
+                balanceDelta: delta));
 
-            await RabbitUtil.WaitForCqrsMessage<AccountBalanceChangedEvent>(m => m.OperationId == operationId);
+            await RabbitUtil.WaitForCqrsMessage<AccountChangedEvent>(m =>
+                m.BalanceChange.Id == operationId + "-update-balance");
+//            CqrsUtil.SendCommandToAccountManagement(
+//                new BeginClosePositionBalanceUpdateCommand(TestsHelpers.ClientId, TestsHelpers.AccountId, delta,
+//                    operationId, "IntegrationTests", "Always_ShouldUpdateBalance"));
+//
+//            await RabbitUtil.WaitForCqrsMessage<AccountBalanceChangedEvent>(m => m.OperationId == operationId);
 
             // assert
             (await TestsHelpers.GetAccount()).Balance.Should().Be(0 + delta);
-            */
         }
     }
 }
