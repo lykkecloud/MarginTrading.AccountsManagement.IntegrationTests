@@ -13,6 +13,8 @@ namespace MarginTrading.AccountsManagement.IntegrationTests.Infrastructure
     public static class CqrsUtil
     {
         private static readonly CqrsEngine _cqrsEngine = CreateEngine();
+        private const string DefaultRoute = "Default";
+        private const string EventsRoute = "events";
 
         private static CqrsEngine CreateEngine()
         {
@@ -35,17 +37,19 @@ namespace MarginTrading.AccountsManagement.IntegrationTests.Infrastructure
                 new RabbitMqConventionEndpointResolver("RabbitMq", "messagepack", environment: sett.EnvironmentName);
             return new CqrsEngine(log, new DependencyResolver(), messagingEngine, new DefaultEndpointProvider(), true,
                 Register.DefaultEndpointResolver(rabbitMqConventionEndpointResolver),
-                RegistrerBoundedContext(sett));
+                RegisterBoundedContext(sett));
         }
 
         // todo: move to test-specific code
-        private static IRegistration RegistrerBoundedContext(CqrsSettings sett)
+        private static IRegistration RegisterBoundedContext(CqrsSettings sett)
         {
             return Register.BoundedContext(sett.ContextNames.TradingEngine)
-                //todo place specific command here
-                .PublishingCommands(typeof(DepositCommand))//BeginClosePositionBalanceUpdateCommand))
+                .PublishingEvents(
+                    typeof(Backend.Contracts.Events.PositionClosedEvent))
+                .With(EventsRoute)
+                .PublishingCommands(typeof(DepositCommand))
                 .To(sett.ContextNames.AccountsManagement)
-                .With("Default");
+                .With(DefaultRoute);
         }
 
         public static void SendCommandToAccountManagement<T>(T command)
@@ -53,6 +57,12 @@ namespace MarginTrading.AccountsManagement.IntegrationTests.Infrastructure
             var sett = SettingsUtil.Settings.MarginTradingAccountManagement.Cqrs;
             _cqrsEngine.SendCommand(command, sett.ContextNames.TradingEngine,
                 sett.ContextNames.AccountsManagement);
+        }
+        
+        public static void SendEventToAccountManagement<T>(T @event)
+        {
+            var sett = SettingsUtil.Settings.MarginTradingAccountManagement.Cqrs;
+            _cqrsEngine.PublishEvent(@event, sett.ContextNames.TradingEngine);
         }
 
         private class DependencyResolver : IDependencyResolver
