@@ -52,6 +52,7 @@ namespace MarginTrading.AccountsManagement.IntegrationTests.WorkflowTests
                     AmountDelta = delta,
                     Reason = "integration tests",
                     ReasonType = AccountBalanceChangeReasonTypeContract.Manual,
+                    EventSourceId = Guid.NewGuid().ToString(),
                 });
 
             await RabbitUtil.WaitForCqrsMessage<AccountChangedEvent>(m => m.BalanceChange.Id == operationId);
